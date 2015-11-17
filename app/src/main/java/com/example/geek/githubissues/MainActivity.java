@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -21,11 +22,14 @@ EditText e1,e2,e3;TextView tt;
     String[] list1;
     int count1=0,count2=0;
     String repository="redcarpet",user="vmg",state="closed";
-    String url="https://api.github.com/repos/"+user+"/"+repository+"/issues?state=closed";
+    String url="https://api.github.com/repos/"+user+"/"+repository+"/issues?state="+state+"";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        e1=(EditText)findViewById(R.id.editText);
+        e2=(EditText)findViewById(R.id.editText2);
+        e3=(EditText)findViewById(R.id.editText3);
         tt=(TextView)findViewById(R.id.textview3);
         tt.setText("Titles for :- user: "+user+", repository: "+repository+", state: "+state);
         new GetContacts().execute();
@@ -33,12 +37,14 @@ EditText e1,e2,e3;TextView tt;
     }
 public void search(View v)
 {
-    e1=(EditText)findViewById(R.id.editText);
-    e2=(EditText)findViewById(R.id.editText2);
-    e3=(EditText)findViewById(R.id.editText3);
-    user=e1.getText().toString();
-    repository=e2.getText().toString();
+
+    user=e2.getText().toString();
+    repository=e1.getText().toString();
     state=e3.getText().toString();
+    url="https://api.github.com/repos/"+user+"/"+repository+"/issues?state="+state+"";
+    Toast.makeText(this,url,Toast.LENGTH_SHORT).show();
+
+
     new GetContacts().execute();
 
 }
@@ -79,6 +85,11 @@ public void search(View v)
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            Toast.makeText(getApplicationContext(),"Write correct details",Toast.LENGTH_LONG).show();
+                        }
+                    });
                 }
             } else {
                 Log.e("ServiceHandler", "Couldn't get any data from the url");
@@ -97,6 +108,7 @@ public void search(View v)
             ArrayAdapter adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.activity_listview, list1);
             TextView t1=(TextView)findViewById(R.id.textview1);
             t1.setText(count1+"");
+            tt.setText("Titles for :- user: "+user+", repository: "+repository+", state: "+state);
             ListView listView = (ListView) findViewById(R.id.list_view);
             listView.setAdapter(adapter);
         }
